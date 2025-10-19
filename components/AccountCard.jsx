@@ -4,7 +4,17 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 function AccountCard(props) {
     return (
-        <TouchableOpacity style={styles.cardContainer}>
+        <TouchableOpacity style={styles.cardContainer} onPress={() => {
+                    props.setDisplayedAccount(
+                        {
+                            accountName: props.accountName,
+                            username: props.username,
+                            password: props.password,
+                        }
+                    );
+                    props.setShowHome(false);
+                    props.setShowAccount(true);
+                }} >
             <View style={styles.logo}/>
             <View style={styles.cardTextContainer}>
                 <Text style={styles.accountName}>{props.accountName}</Text>

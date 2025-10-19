@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import AccountCard from './AccountCard';
 import { listOfAccounts } from '../App';
 
-function SearchBar() {
+function SearchBar(props) {
     const [searchText, setSearchText] = React.useState('');
     return (
         <View style={styles.searchBarAndCardsWrapper}>
@@ -17,7 +17,13 @@ function SearchBar() {
             <ScrollView style={styles.listOfAccountCards} contentContainerStyle={styles.alignItemsCenter}>
                 {listOfAccounts.map((account) => {
                     if(account.accountName.toLowerCase().includes(searchText.toLowerCase())) {
-                        return (<AccountCard accountName={account.accountName} username={account.username}/>);
+                        return (
+                            <AccountCard
+                                setDisplayedAccount={props.setDisplayedAccount}
+                                setShowAccount={props.setShowAccount} setShowHome={props.setShowHome}
+                                accountName={account.accountName} username={account.username} password={account.password}
+                            />
+                        );
                     }
                 })}
             </ScrollView>

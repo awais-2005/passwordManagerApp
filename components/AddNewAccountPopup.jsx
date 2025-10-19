@@ -14,7 +14,7 @@ function AddNewAccountPopup(props) {
             <Text style={styles.inputLabel}>Enter email, Phone No. or Username:</Text>
             <TextInput style={styles.textInput} placeholder="e.g. example@gmail.com" onChangeText={setUsername} value={username}/>
             <Text style={styles.inputLabel}>Enter password:</Text>
-            <TextInput style={styles.textInput} placeholder="XXXXXX" onChangeText={setPassword} value={password}/>
+            <TextInput style={styles.textInput} placeholder="Password" onChangeText={setPassword} value={password} secureTextEntry={true} />
             <TouchableOpacity style={styles.addButton} onPress={() => {
                 if(accountName && username && password) {
                     appendAccountList(

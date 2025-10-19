@@ -1,19 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Navbar from './components/Navbar';
 import SearchBar from './components/SearchBar';
 import AddButton from './components/AddButton';
 import AddNewAccountPopup from './components/AddNewAccountPopup';
+import AccountDetails from './components/AccountDetails';
 
 export default function App() {
-    const [showAddAccountPopup, setShowAddAccountPopup] = React.useState(false);
-    const [showAddButton, setShowAddButton] = React.useState(true);
+    const [showHomeScreen, setShowHomeScreen] = useState(true);
+    const [showAddAccountPopup, setShowAddAccountPopup] = useState(false);
+    const [showAddButton, setShowAddButton] = useState(true);
+    const [showAccountScreen, setShowAccountScreen] = useState(false);
+    const [displayedAccount, setDisplayedAccount] = useState({});
     return (
-        <View style={styles.main}>
-            <Navbar/>
-            <SearchBar/>
-            {showAddButton && <AddButton showAddPopup={showAddAccountPopup} setShowAddPopup={setShowAddAccountPopup} showAdd={showAddButton} setShowAdd={setShowAddButton}/>}
-            {showAddAccountPopup && (<AddNewAccountPopup showAddPopup={showAddAccountPopup} setShowAddPopup={setShowAddAccountPopup} showAdd={showAddButton} setShowAdd={setShowAddButton}/>)}
+        <View>
+            { showHomeScreen && (
+            <View style={styles.main}>
+                <Navbar/>
+                <SearchBar setDisplayedAccount={setDisplayedAccount} setShowAccount={setShowAccountScreen} setShowHome={setShowHomeScreen} />
+                {showAddButton && <AddButton showAddPopup={showAddAccountPopup} setShowAddPopup={setShowAddAccountPopup} showAdd={showAddButton} setShowAdd={setShowAddButton}/>}
+                {showAddAccountPopup && (<AddNewAccountPopup showAddPopup={showAddAccountPopup} setShowAddPopup={setShowAddAccountPopup} showAdd={showAddButton} setShowAdd={setShowAddButton}/>)}
+            </View>
+            )}
+            {showAccountScreen && (
+                <AccountDetails displayedAccount={displayedAccount} setShowAccount={setShowAccountScreen} setShowHome={setShowHomeScreen} />
+            )}
         </View>
     );
 }
