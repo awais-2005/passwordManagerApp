@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 function AddButton(props) {
     return (
-        <TouchableOpacity style={styles.buttonContainer} onPress={() => {props.setShowAdd(false); props.setShowAddPopup(true);}}>
+        <TouchableOpacity style={styles.buttonContainer} onPress={() => {props.setShowHome(false); props.setShowAddPopup(true);}}>
             <Icon name="add" size={40} color="#fff" />
         </TouchableOpacity>
     );

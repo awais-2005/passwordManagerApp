@@ -6,9 +6,10 @@ function Navbar() {
   return (
      <View style={styles.main}>
             <View style={styles.navBar}>
-                <Icon name="settings-outline" size={30} color="#000" />
+                <View style={styles.icon}>
+                    <Icon name="settings-outline" size={30} color="grey" />
+                </View>
                 <Text style={styles.navBarTitle}>Password Manager</Text>
-                <Icon name="person-circle-outline" size={35} color="#000" />
             </View>
         </View>
   );
@@ -20,15 +21,25 @@ const styles = StyleSheet.create({
         height: 65,
         backgroundColor: 'transparent',
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
         paddingHorizontal: 20,
         marginBottom: 20,
     },
     navBarTitle: {
+        flex: 1,
         fontSize: 23,
+        alignSelf: 'center',
+        textAlign: 'center',
         fontWeight: 'bold',
         color: '#000',
+    },
+    icon: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 65,
+        width: 65,
+        position: 'absolute',
+        top: 0,
+        right: 0,
     },
 });
 

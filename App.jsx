@@ -1,90 +1,96 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import Navbar from './components/Navbar';
 import SearchBar from './components/SearchBar';
 import AddButton from './components/AddButton';
 import AddNewAccountPopup from './components/AddNewAccountPopup';
 import AccountDetails from './components/AccountDetails';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 export default function App() {
+    const [listOfAccounts, setListOfAccounts] = useState([]);
     const [showHomeScreen, setShowHomeScreen] = useState(true);
     const [showAddAccountPopup, setShowAddAccountPopup] = useState(false);
     const [showAddButton, setShowAddButton] = useState(true);
     const [showAccountScreen, setShowAccountScreen] = useState(false);
     const [displayedAccount, setDisplayedAccount] = useState({});
+    const [showError, setShowError] = useState(false);
+    const [error, setError] = useState('No Error');
+
+    EncryptedStorage.getItem('accounts')
+        .then((data) => {
+            setListOfAccounts(data ? JSON.parse(data) : []);
+            setAllAccounts(listOfAccounts);
+        })
+        .catch(() => {
+            setError('Could not read accounts from storage.');
+            setShowHomeScreen(false);
+            setShowError(true);
+        });
     return (
         <View>
-            { showHomeScreen && (
-            <View style={styles.main}>
-                <Navbar/>
-                <SearchBar setDisplayedAccount={setDisplayedAccount} setShowAccount={setShowAccountScreen} setShowHome={setShowHomeScreen} />
-                {showAddButton && <AddButton showAddPopup={showAddAccountPopup} setShowAddPopup={setShowAddAccountPopup} showAdd={showAddButton} setShowAdd={setShowAddButton}/>}
-                {showAddAccountPopup && (<AddNewAccountPopup showAddPopup={showAddAccountPopup} setShowAddPopup={setShowAddAccountPopup} showAdd={showAddButton} setShowAdd={setShowAddButton}/>)}
-            </View>
+            {showHomeScreen && (
+                <View style={styles.main}>
+                    <Navbar />
+                    <SearchBar accountList={listOfAccounts} setDisplayAccount={setDisplayedAccount} setShowAccount={setShowAccountScreen} setShowHome={setShowHomeScreen} />
+                    {showAddButton && <AddButton setShowAddPopup={setShowAddAccountPopup} setShowHome={setShowHomeScreen} />}
+                </View>
             )}
             {showAccountScreen && (
-                <AccountDetails displayedAccount={displayedAccount} setShowAccount={setShowAccountScreen} setShowHome={setShowHomeScreen} />
+                <AccountDetails
+                    setShowHome={setShowHomeScreen}
+                    displayedAccount={displayedAccount}
+                    setShowAccount={setShowAccountScreen}
+                />
+            )}
+            {showAddAccountPopup && (
+                <AddNewAccountPopup
+                    accountsList={listOfAccounts}
+                    setErr={setError}
+                    setShowErr={setShowError}
+                    setShowHome={setShowHomeScreen}
+                    showAddPopup={showAddAccountPopup}
+                    setShowAddPopup={setShowAddAccountPopup}
+                    showAdd={showAddButton}
+                    setShowAdd={setShowAddButton}
+                />)}
+            {showError && (
+                <View>
+                    <Text>{error}</Text>
+                </View>
             )}
         </View>
     );
 }
-
-export function appendAccountList(newAccount) {
-    listOfAccounts = listOfAccounts.reverse();
-    listOfAccounts.push(newAccount);
-    listOfAccounts = listOfAccounts.reverse();
+let allAccounts = [];
+function setAllAccounts(allAcc) {
+    allAccounts = allAcc;
+}
+export function updateChange(updatedAccount) {
+    for (let account of allAccounts) {
+        if (account.id === updatedAccount.id) {
+            account.username = updatedAccount.username;
+            account.password = updatedAccount.password;
+        }
+    }
+    EncryptedStorage.setItem('accounts', JSON.stringify(allAccounts)).catch(() => { console.error('Could not setup Updated list.'); });
 }
 
-export let listOfAccounts = [
-    {
-        id: 1,
-        accountName: 'Google',
-        username: 'awais123',
-        password: 'abc123',
-    },
-    {
-        id: 2,
-        accountName: 'Facebook',
-        username: 'awais.fb',
-        password: 'abc123',
-    },
-    {
-        id: 3,
-        accountName: 'Instagram',
-        username: 'awais.ig',
-        password: 'abc123',
-    },
-    {
-        id: 4,
-        accountName: 'Twitter',
-        username: 'awais_tw',
-        password: 'abc123',
-    },
-    {
-        id: 5,
-        accountName: 'LinkedIn',
-        username: 'awais_li',
-        password: 'abc123',
-    },
-    {
-        id: 6,
-        accountName: 'GitHub',
-        username: 'awais-gh',
-        password: 'abc123',
-    },
-    {
-        id: 7,
-        accountName: 'Reddit',
-        username: 'awais_rd',
-        password: 'abc123',
-    },
-    {
-        id: 8,
-        accountName: 'Snapchat',
-        username: 'awais_sc',
-        password: 'abc123',
-    },
-];
+export function deleteAccount(account) {
+    allAccounts.splice(account.id - 1, 1);
+    EncryptedStorage.setItem('accounts', JSON.stringify(allAccounts)).catch(() => { console.error('Could not setup Updated list.'); });
+}
+
+export function appendAccountList(accountList, newAccount, setShowError, setError, setShowHome) {
+    accountList = accountList.reverse();
+    accountList.push(newAccount);
+    accountList = accountList.reverse();
+    EncryptedStorage.setItem('accounts', JSON.stringify(accountList)).catch((e) => {
+        setError('Got Error while setting accounts in storage.');
+        setShowError(true);
+        setShowHome(false);
+    });
+}
 
 const styles = StyleSheet.create({
     main: {

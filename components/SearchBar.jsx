@@ -2,7 +2,6 @@ import React from 'react';
 import { View, TextInput, StyleSheet, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AccountCard from './AccountCard';
-import { listOfAccounts } from '../App';
 
 function SearchBar(props) {
     const [searchText, setSearchText] = React.useState('');
@@ -10,18 +9,18 @@ function SearchBar(props) {
         <View style={styles.searchBarAndCardsWrapper}>
             <View style={styles.searchBarContainer}>
                 <View style={styles.searchIcon}>
-                    <Icon name="search-outline" size={20}/>
+                    <Icon name="search-outline" size={22.5} color="grey"/>
                 </View>
-                <TextInput onChangeText={setSearchText} value={searchText} placeholder="Search account here..." style={styles.searchInput}/>
+                <TextInput onChangeText={setSearchText} value={searchText} placeholder="Search account here..." placeholderTextColor="grey" style={styles.searchInput}/>
             </View>
             <ScrollView style={styles.listOfAccountCards} contentContainerStyle={styles.alignItemsCenter}>
-                {listOfAccounts.map((account) => {
+                {props.accountList.map((account) => {
                     if(account.accountName.toLowerCase().includes(searchText.toLowerCase())) {
                         return (
                             <AccountCard
-                                setDisplayedAccount={props.setDisplayedAccount}
-                                setShowAccount={props.setShowAccount} setShowHome={props.setShowHome}
-                                accountName={account.accountName} username={account.username} password={account.password}
+                                setDisplayAcc={props.setDisplayAccount}
+                                setShowAcc={props.setShowAccount} setShowHom={props.setShowHome}
+                                currentAccount={account}
                             />
                         );
                     }
@@ -42,7 +41,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: '#fff',
         borderRadius: 25,
-        borderWidth: 0.3,
+        borderWidth: 1,
+        borderColor: 'grey',
         paddingHorizontal: 10,
         marginBottom: 20,
         alignItems: 'center',
@@ -55,7 +55,8 @@ const styles = StyleSheet.create({
     },
     searchInput: {
         flex: 1,
-        fontSize: 16,
+        color: '#3c3c3c',
+        fontSize: 17,
     },
     listOfAccountCards: {
         width: '100%',
