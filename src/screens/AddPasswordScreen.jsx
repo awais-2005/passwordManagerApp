@@ -167,7 +167,7 @@ function getId() {
 }
 
 export function getLogoName(name) {
-  const nameToLower = name.toLowerCase();
+  const nameToLower = name.toLowerCase().replace(/[' ']/g, '');
   if(nameToLower.includes('google')) {
     return 'logo-google';
   }
@@ -176,9 +176,6 @@ export function getLogoName(name) {
   }
   if(nameToLower.includes('linkedin')) {
     return 'logo-linkedin';
-  }
-  if(nameToLower.includes('twitter') || nameToLower === 'x') {
-    return 'logo-x';
   }
   if(nameToLower.includes('github')) {
     return 'logo-github';
@@ -225,9 +222,7 @@ export function getLogoName(name) {
   if(nameToLower.includes('youtube')) {
     return 'logo-youtube';
   }
-  if(nameToLower.includes('netflix')) {
-    return 'netflix';
-  }
+  return '';
 }
 
 export function checkIfCompromised(pwd) {

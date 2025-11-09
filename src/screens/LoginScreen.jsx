@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 export default function LoginScreen(props) {
@@ -15,13 +15,18 @@ export default function LoginScreen(props) {
     setPin(pin.slice(0, -1));
   };
 
+  const handleForgetPIN = () => {
+    Alert.alert('Message', 'Forget pin will be available soon.');
+  };
+
   const checkPin = () => {
     if(pin === props.user.pin) {
       setTimeout(() => {
-        props.setShowLogin(false);
+        // props.setShowLogin(false);
+        props.setLoggedIn(true);
         props.setShowHomeScreen(true);
       }, 100);
-      }
+    }
   };
 
   const renderDots = () => {
@@ -75,7 +80,7 @@ export default function LoginScreen(props) {
         ))}
       </View>
 
-      <TouchableOpacity style={styles.forgotContainer}>
+      <TouchableOpacity style={styles.forgotContainer} onPress={handleForgetPIN}>
         <Text style={styles.forgotText}>Forgot PIN?</Text>
       </TouchableOpacity>
     </SafeAreaView>

@@ -8,6 +8,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import ProfileScreen from './src/screens/ProfileScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
+import ResetPinScreen from './src/screens/ResetPinScreen';
 
 // const testList = [
 //         {
@@ -76,9 +77,10 @@ const App = () => {
     const [showUpdatePassword, setShowUpdatePassword] = useState(false);
     const [showAddPassword, setShowAddPassword] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
-    const [showLogin, setShowLogin] = useState(true);
+    const [showLogin, setShowLogin] = useState(false);
     const [showSignup, setShowSignup] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
+    const [showResetPinScreen, setShowResetPinScreen] = useState(false);
     const [displayedPassword, setDisplayedPassword] = useState({});
 
 
@@ -89,9 +91,10 @@ const App = () => {
 
     useEffect(() => {
         let signedUp = !isObjEmpty(user);
-        setShowLogin(signedUp);
+        setShowLogin(signedUp && !loggedIn);
         setShowSignup(!signedUp);
-    }, [user]);
+        setShowHomeScreen(signedUp && loggedIn);
+    }, [loggedIn, user]);
 
     const checkSignUp = async () => {
         EncryptedStorage.getItem('userOfPasswordManager').then((data) => {
@@ -105,6 +108,7 @@ const App = () => {
         EncryptedStorage.setItem('userOfPasswordManager', JSON.stringify(userDetails)).then(() => {
             Alert.alert('Success', 'Account has been created successfully. Always remember your birthplace which you entered ' + userDetails.answer);
             setUser(userDetails);
+            setLoggedIn(true);
         }).catch((err) => {
             Alert.alert('Failed', 'Could not create an account' + err);
         });
@@ -198,14 +202,61 @@ const App = () => {
         }
     };
 
+    const changePIN = () => {
+        setShowProfile(false);
+        setShowResetPinScreen(true);
+    };
+
+    const updateProfile = () => {
+        Alert.alert('Message', 'Update profile feature will be available soon');
+    };
+
     const deleteAccount = async () => {
-        EncryptedStorage.removeItem('userOfPasswordManager').then(() => {
-            Alert.alert('Success', 'Your Account has been deleted.');
-            setShowProfile(false);
-            setUser({});
+        EncryptedStorage.removeItem('passwords').then(() => {
+            EncryptedStorage.removeItem('userOfPasswordManager').then(() => {
+                Alert.alert('Success', 'Your Account has been deleted.');
+                setShowProfile(false);
+                setUser({});
+            }).catch((err) => {
+                EncryptedStorage.setItem('passwords', JSON.stringify(passwords)).then(() => {
+                    Alert.alert('Failed', 'Could not delete account. Please try again.');
+                }).catch((err1) => {
+                    Alert.alert('Failed', 'Could not delete your account.', err1);
+                });
+                Alert.alert('Failed', 'Could not delete your account.', err);
+            });
         }).catch((err) => {
             Alert.alert('Failed', 'Could not delete your account.', err);
         });
+    };
+
+    const confirmDeletion = async () => {
+        Alert.alert('Warning',
+            'Critical Action: After this you might lose all of your data',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Delete', style: 'destructive', onPress: async () => {
+                        await deleteAccount();
+                    },
+                },
+            ]
+        );
+    };
+
+    const saveNewPin = async (newPin) => {
+        if(newPin && user.pin) {
+            user.pin = newPin;
+            EncryptedStorage.setItem('userOfPasswordManager', JSON.stringify(user)).then(() => {
+                Alert.alert('Success', 'Pin has been updated');
+                setShowResetPinScreen(false);
+                setShowHomeScreen(true);
+            }).catch((err) => {
+                Alert.alert('Failed', 'Could not change the pin', err);
+            });
+        } else {
+            Alert.alert('Failed', 'Something went wrong.');
+        }
     };
 
     return (
@@ -248,17 +299,27 @@ const App = () => {
                 setShowProfile={setShowProfile}
                 setShowAddPassword={setShowAddPassword}
                 user={user}
-                deleteAccount={deleteAccount}
+                confirmDeletion={confirmDeletion}
+                changePIN={changePIN}
+                updateProfile={updateProfile}
             />)}
 
             {showLogin && (<LoginScreen
                 setShowHomeScreen={setShowHomeScreen}
                 setShowLogin={setShowLogin}
-                user={{pin: user.pin + ''}}
+                setLoggedIn={setLoggedIn}
+                user={{ pin: user.pin + '' }}
             />)}
 
             {showSignup && (<SignupScreen
                 saveUser={saveUser}
+            />)}
+
+            {showResetPinScreen && (<ResetPinScreen
+                setShowProfile={setShowProfile}
+                setShowResetPinScreen={setShowResetPinScreen}
+                saveNewPin={saveNewPin}
+                user={{pin: user.pin}}
             />)}
         </View>
     );

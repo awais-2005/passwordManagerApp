@@ -23,9 +23,9 @@ export default function ProfileScreen(props) {
 
       {/* Menu Options */}
       <View style={styles.menu}>
-        <Option icon="person-outline" label="Update Profile" deleteAccount={props.deleteAccount} />
-        <Option icon="key-outline" label="Change Master PIN" deleteAccount={props.deleteAccount} />
-        <Option icon="trash-outline" label="Delete Account" deleteAccount={props.deleteAccount} />
+        <Option icon="person-outline" label="Update Profile" action={props.updateProfile}/>
+        <Option icon="key-outline" label="Change Master PIN" action={props.changePIN}/>
+        <Option icon="trash-outline" label="Delete Account" action={props.confirmDeletion} />
       </View>
       <BottomNav
         screenName={'profile'}
@@ -38,17 +38,9 @@ export default function ProfileScreen(props) {
   );
 }
 
-const Option = ({ icon, label, deleteAccount}) => (
+const Option = ({ icon, label, action}) => (
   <TouchableOpacity style={styles.option} onPress={() => {
-    if(icon === 'person-outline') {
-      console.log('update profile');
-    }
-    else if(icon === 'key-outline') {
-      console.log('change pin');
-    }
-    else if(icon === 'trash-outline') {
-      deleteAccount();
-    }
+    action();
   }} >
     <Icon name={icon} size={20} color="#FF5A5F" />
     <Text style={styles.optionText}>{label}</Text>

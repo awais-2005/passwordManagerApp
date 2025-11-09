@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -48,7 +48,9 @@ function HomeScreen(props) {
             }}
         >
             <View style={[styles.iconContainer, { backgroundColor: '#535973' }]}>
-                <Icon name={item.icon} size={28} color="#FFFFFF" />
+                {item.icon ?
+                <Icon name={item.icon} size={28} color="#FFFFFF" /> :
+                <Text style={styles.letterIcon}>{item.name.toUpperCase()[0]}</Text>}
             </View>
             <Text style={styles.passwordName}>{item.name}</Text>
             <TouchableOpacity
@@ -222,6 +224,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         padding: 18,
         marginBottom: 12,
+    },
+    letterIcon: {
+        fontSize: 26,
+        fontWeight: '900',
+        color: '#fff',
     },
     iconContainer: {
         width: 50,
